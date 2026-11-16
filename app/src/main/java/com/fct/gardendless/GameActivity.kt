@@ -62,6 +62,10 @@ class GameActivity : AppCompatActivity() {
 
     private val FILE_CHOOSER_RESULT_CODE = 101
     private val EXPORT_SAVE_RESULT_CODE = 102
+    private val EXPORT_DOCUMENT_CODE = 103
+    private var exportChoiceRequest: String? = null
+    private val exportTargets = mutableMapOf<String, Uri>()
+
 
     private var filePathCallback: ValueCallback<Array<Uri>>? = null
 
@@ -155,6 +159,51 @@ class GameActivity : AppCompatActivity() {
                 @JavascriptInterface
                 fun setExportName(name: String) {
                     pendingExportName = name
+                }
+
+                @JavascriptInterface
+                fun chooseExport(requestId: String, name: String) {
+                    webView.post {
+                        if (exportChoiceRequest != null) {
+                            completeExport(requestId, false, "Another export dialog is open")
+                            return@post
+                        }
+                        exportChoiceRequest = requestId
+                        try {
+                            val safeName = name.substringAfterLast('/').substringAfterLast('\\').take(160)
+                            startActivityForResult(Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+                                type = mimeFromExtension(safeName) ?: "application/octet-stream"
+                                addCategory(Intent.CATEGORY_OPENABLE)
+                                putExtra(Intent.EXTRA_TITLE, safeName)
+                            }, EXPORT_DOCUMENT_CODE)
+                        } catch (e: Exception) {
+                            exportChoiceRequest = null
+                            completeExport(requestId, false, "Cannot open system document picker")
+                        }
+                    }
+                }
+
+                @JavascriptInterface
+                fun writeExport(requestId: String, token: String, base64: String) {
+                    webView.post {
+                        val uri = exportTargets.remove(token)
+                        if (uri == null || base64.length > 45 * 1024 * 1024) {
+                            completeExport(requestId, false, "Invalid export target or oversized data")
+                            return@post
+                        }
+                        GlobalScope.launch(Dispatchers.IO) {
+                            val result = runCatching {
+                                val bytes = Base64.decode(base64, Base64.DEFAULT)
+                                require(bytes.size <= 32 * 1024 * 1024)
+                                contentResolver.openOutputStream(uri, "wt")?.use { it.write(bytes) }
+                                    ?: throw java.io.IOException("Cannot open destination")
+                            }
+                            withContext(Dispatchers.Main) {
+                                if (!isDestroyed && !isFinishing) completeExport(requestId, result.isSuccess,
+                                    if (result.isSuccess) null else "Writing the selected document failed")
+                            }
+                        }
+                    }
                 }
 
                 // ── gp-next 数据目录（Tauri plugin:path / plugin:fs 的落地实现）──
@@ -398,6 +447,17 @@ class GameActivity : AppCompatActivity() {
                 filePathCallback?.onReceiveValue(result as Array<Uri>?)
                 filePathCallback = null
             }
+            EXPORT_DOCUMENT_CODE -> {
+                val requestId = exportChoiceRequest ?: return
+                exportChoiceRequest = null
+                val uri = if (resultCode == RESULT_OK) data?.data else null
+                if (uri == null) completeExport(requestId, true, null)
+                else {
+                    val token = "gd-export:" + java.util.UUID.randomUUID()
+                    exportTargets[token] = uri
+                    completeExport(requestId, true, token)
+                }
+            }
             EXPORT_SAVE_RESULT_CODE -> {
                 val bytes = pendingExport
                 pendingExport = null
@@ -406,6 +466,11 @@ class GameActivity : AppCompatActivity() {
                 if (bytes != null && uri != null) saveExportTo(uri, bytes)
             }
         }
+    }
+
+    private fun completeExport(id: String, ok: Boolean, value: String?) {
+        val payload = if (value == null) "null" else JSONObject.quote(value)
+        webView.evaluateJavascript("window.__gdExportComplete && window.__gdExportComplete(${JSONObject.quote(id)},$ok,$payload)", null)
     }
 
     private fun saveExportTo(uri: Uri, bytes: ByteArray) {

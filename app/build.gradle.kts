@@ -22,8 +22,8 @@ android {
         applicationId = "com.fct.gardendless.offlinealpha"
         minSdk = 27
         targetSdk = 36
-        versionCode = 162604
-        versionName = "0.16.26-offline-alpha4-notice"
+        versionCode = 162605
+        versionName = "0.16.26-offline-alpha5-webviewfix"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

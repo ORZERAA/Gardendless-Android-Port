@@ -1,6 +1,6 @@
-# Gardendless 安卓个人适配代码（Alpha 4）
+# Gardendless 安卓个人适配代码（Alpha 5）
 
-本包仅用于公开代码审阅和维护，不包含 APK、EXE、游戏构建产物、游戏媒体素材、用户存档或签名私钥。与 Alpha 4 对应的适配逻辑包含在本包中；原游戏启动图标已替换成通用几何矢量图标。
+本包仅用于公开代码审阅和维护，不包含 APK、EXE、游戏构建产物、游戏媒体素材、用户存档或签名私钥。与 Alpha 5 对应的适配逻辑包含在本包中；原游戏启动图标已替换成通用几何矢量图标。
 
 ## 来源和许可
 
@@ -17,13 +17,28 @@ python tools/prepare_game.py --game-dir <本机合法准备的资源目录>
 
 gradlew.bat assembleDebug
 
-运行 JS 测试：bun test tests。
+运行 JS 测试：bun install --frozen-lockfile，然后 bun test tests。
+
+新增平台兼容脚本的重建命令：
+
+bun build compat/webview-platform.entry.js --target browser --format iife --outfile compat/webview-platform.js
+
+构建产物 compat/webview-platform.js 已附带，可直接用于资源准备。其 @ungap/structured-clone 1.3.0 依赖使用 MIT 许可证，见 compat/structured-clone-LICENSE.txt；保留该许可证。不要提交 node_modules。
+
 
 Gradle 8.13 分发配置使用镜像并固定官方 SHA-256。不要把 local.properties、签名私钥、游戏 ZIP、编译日志、存档和 .smoke-data 测试数据上传。
 
+## Alpha 5 修改
+
+- 游戏启动前补齐缺失的 structuredClone，并兼容 AbortSignal.timeout / crypto.randomUUID。
+- 新增 android-export.js，将 Tauri 保存和文件写入接入 Android 系统文档选择器。
+- 导出使用一次性令牌，写入成功后才 resolve；取消返回 null，失败返回错误。
+- 包版本提升为 162605 / 0.16.26-offline-alpha5-webviewfix，包名不变。
+- 本次针对玩家截图中的旧 WebView API 缺失；尚未在红米 K30S 上验证。
+
 ## 验证状态
 
-原 Alpha 4 工程编译通过，26 项 JS 测试通过。本公开副本替换了图标、移除了资源与机器配置，未单独重建 APK。
+原 Alpha 5 工程编译通过，30 项 JS 测试通过。本公开副本替换了图标、移除了资源与机器配置，未单独重建 APK。
 此前实机反馈关卡可运行，弹窗修复有效；不能推断所有机型均正常。触控、弹窗和本地模组兼容代码可在 compat/ 和 app/src/main/java/ 中查看。
 
 ## 隐私

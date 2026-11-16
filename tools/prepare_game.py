@@ -10,16 +10,18 @@ def main():
     args=parser.parse_args(); game=args.game_dir.resolve()
     info=json.loads((game/'app-info.json').read_text(encoding='utf-8'))
     if info.get('Version')!='0.16.26':raise ValueError('This adapter was tested against 0.16.26 only')
-    scripts=['legacy-polyfill.js','legacy-shim.js','android-compat.js','android-dialogs.js']
+    scripts=['webview-platform.js','legacy-polyfill.js','legacy-shim.js','android-compat.js','android-export.js','android-dialogs.js']
     html=(game/'index.html').read_text(encoding='utf-8')
     if '__gdCompatVersion' in html or 'android-compat.js' in html:raise ValueError('Input appears already patched')
     injection='''
   <!-- Offline alpha: synchronous compatibility initialization before Vite modules. -->
+  <script src="/webview-platform.js"></script>
   <script>window.isTauri=true;window.__gdForceJsModding=false;</script>
   <script src="/legacy-polyfill.js"></script>
   <script src="/legacy-shim.js"></script>
   <script src="/android-compat.js"></script>
   <script>GardendlessCompat.install(window);</script>
+  <script src="/android-export.js"></script>
   <script src="/android-dialogs.js"></script>
 '''
     # Block duplicate native touches only on GameCanvas. MouseGameWebView supplies mouse events.
@@ -55,7 +57,7 @@ def main():
             for name in scripts:
                 data=(ROOT/'compat'/name).read_bytes()
                 z.writestr('pvzge_web-master/docs/'+name,data);manifest[name]=hashlib.sha256(data).hexdigest()
-            z.writestr('pvzge_web-master/docs/android-port.json',json.dumps({'version':'0.16.26-offline-alpha4-notice','offline':True},indent=2))
+            z.writestr('pvzge_web-master/docs/android-port.json',json.dumps({'version':'0.16.26-offline-alpha5-webviewfix','offline':True},indent=2))
         os.replace(tmp,target)
     finally:tmp.unlink(missing_ok=True)
     (ROOT/'game-package-manifest.json').write_text(json.dumps({'version':info['Version'],'files':manifest},indent=2),encoding='utf-8')
