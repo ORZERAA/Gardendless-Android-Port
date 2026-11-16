@@ -1,0 +1,6 @@
+Unofficial Android compatibility changes for Gardendless 0.16.26.
+Based on Cateners/gardendless-android: https://github.com/Cateners/gardendless-android
+Retain upstream copyright and GPL-3.0-or-later notices. New adaptation code is provided under GPL-3.0-or-later.
+No game resources, APKs, EXEs, user saves or private signing keys are included.
+Legacy compatibility scripts originate from a prior Android port; original authors retain their rights. Verify provenance/license before publication.
+Game and asset rights are not granted by the shell license.
