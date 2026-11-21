@@ -9,7 +9,7 @@
   "package.json": "7c53f72e4543ab662962c9bf4c55e9876eb99483c5b2ff4e895e182db1ceade8",
   "settings.gradle.kts": "5566f4888dd956b731144fd8e2b2abf43788e35123217d76ce1a38ad82d1b2c3",
   "app/.gitignore": "5c3174b74edc6f2b9e0743594b8bd3c7f31e4f4405758cc9872b3fe1de1d28b4",
-  "app/build.gradle.kts": "8a31f32a32a62579a757e6a017e05e0bc5eb27688abc5ce7a2dbf36a4093227d",
+  "app/build.gradle.kts": "ca0dbb5e5703420b9fba811f5b7b663f125f28daf0c74fc4c75bddbc0cfbed04",
   "app/proguard-rules.pro": "38be35dbae27a9f2c91a5a2ad132813288906d5aaa140d639ba0c313d81cc7ac",
   "app/src/androidTest/java/com/fct/gardendless/ExampleInstrumentedTest.kt": "0443cf1e3cfd0f496532077a324aa46048f48239a0b01881fe1ce25f01b427b7",
   "app/src/main/AndroidManifest.xml": "9df91e554a161e471a007ea58c3ee318b1bc7d601167476a6527510c2ef462f4",
@@ -34,7 +34,7 @@
   "compat/about-adaptation.zh.md": "e1c3b9275710ea5ad127d4620a03e8e5abc8c410ea401790f350412fa4f001e0",
   "compat/android-compat.js": "21b30e4f360f6eb22938e3048eb1ba1f9e3e2c1252f634539a368d0e6bfa1147",
   "compat/android-dialogs.js": "b51aa08be69f96e5a545bfc3f391e176426b3a4c469b21c43986e70d05af964e",
-  "compat/android-export.js": "24998b6e846b6d9366eb2f29ca3dfe684eb7496470c994efd1a3003685cef516",
+  "compat/android-export.js": "8533a66d15459b7fed439a74073642558ff0d0b2c3aeec23dc4ed3ccf3035d0e",
   "compat/legacy-polyfill.js": "be035be813a9a87c724a9b02cd81b8cd8acfff22b8d5fa006eacc45d9979b4fd",
   "compat/legacy-shim.js": "46f3d39b1939a8b92b162b75bf2ca6553538ade4cf92535004ceb55b5099a467",
   "compat/structured-clone-LICENSE.txt": "dc6d4961d8b6ee747231582ae9c53ce1d66bf76bc9f5a28f554c0e97210953bf",
@@ -50,10 +50,12 @@
   "tests/touch.test.js": "0ef32cdf79a777c2e32c2b687d4ad60c357df3df7783913321b8f7911a42a1a4",
   "tests/webview.test.js": "554e77c990d0dd3a006b65b3ff775fbbc6f081e53f2041f0ef59db7d3fa58e4e",
   "tools/browser_smoke.py": "01184ccdc40218ddc01d76398b5c85a462a2d368cda3ee6ae69dc4f1cf2b7966",
-  "tools/prepare_game.py": "73857ef9498ea20ce1f14b566727d91dccf6d51d2777447ed766cf39ccfd69b2",
+  "tools/prepare_game.py": "4899aa4ecf11f8b70a1aa4ec459710aba22f7667fba4731fce4d09d568895e9f",
   "app/src/main/res/drawable/public_code_icon.xml": "df9094379bf371fe76bb68e89ec4f0df9f5ce5b9f31ac1446ab7ca2498d9818d",
-  "README.md": "af2158a770a088e21118816c00b3b7abaf4f40eb80d8e45700ad81d1b4fd0974",
+  "README.md": "a1b5866bafe8ebe46eb0b6a167c57187cee3f8b548240f0c771e81b236fcdbff",
   "NOTICE.txt": "874fe8a079787ccb58458a7052c942252835d63611034d99e1f067e6d2da725e",
   "Alpha5-旧WebView兼容与诊断导出.txt": "e84e3e61ce5014ce1896077a03221417129006e79cc1ba91003592edf7557d54",
-  "CHANGELOG-Alpha5.md": "32a8bcc71ff528365b0d7a064a41f7e7a2f371fba5b34797361ec6a3ac2ebcd3"
+  "CHANGELOG-Alpha5.md": "32a8bcc71ff528365b0d7a064a41f7e7a2f371fba5b34797361ec6a3ac2ebcd3",
+  "tests/download.test.js": "9ac9d6c89004f4d1e01fa947993c2fadbe352d0c0ecdbc403d5d5558b166e6c6",
+  "CHANGELOG-Alpha6.md": "c3193647ef9e9c3acac4b20d1a7134792ea8bbf14fc00053681f7b109b85e7ed"
 }
