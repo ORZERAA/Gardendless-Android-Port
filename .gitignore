@@ -30,3 +30,5 @@ keystore.properties
 *.log
 game-package-manifest.json
 test-results.txt
+
+node_modules/

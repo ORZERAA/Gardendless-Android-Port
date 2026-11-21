@@ -24,6 +24,46 @@
    }
    return original(cmd,args,options);
   };
+  // Regular game saves use a detached <a download href=blob:...>, followed by
+  // immediate revokeObjectURL. Capture the Blob synchronously before that revoke.
+  if(win.URL&&win.HTMLAnchorElement&&win.document){
+   const blobs=new Map(),active=new WeakSet(),url=win.URL;
+   const create=url.createObjectURL.bind(url),revoke=url.revokeObjectURL.bind(url);
+   url.createObjectURL=function(blob){const key=create(blob);blobs.set(key,blob);return key;};
+   url.revokeObjectURL=function(key){blobs.delete(String(key));return revoke(key);};
+   function status(text){
+    let el=win.document.getElementById('gd-export-status');
+    if(!el){el=win.document.createElement('div');el.id='gd-export-status';el.setAttribute('role','status');el.style.cssText='position:fixed;left:8px;right:8px;bottom:8px;z-index:2147483647;padding:12px;background:#202020;color:#fff;border:1px solid #8bd890;border-radius:8px;pointer-events:none';win.document.body.appendChild(el);}
+    el.textContent=text;
+   }
+   function capture(anchor){
+    if(!anchor||!anchor.download)return false;
+    const href=anchor.getAttribute('href')||anchor.href||'';
+    if(!/^(blob:|data:)/i.test(href))return false;
+    if(active.has(anchor))return true;
+    active.add(anchor);
+    const blob=blobs.get(href),name=String(anchor.download).split(/[\\/]/).pop();
+    // Start bytes acquisition now, not after the system picker returns.
+    const bytes=blob?blob.arrayBuffer():win.fetch(href).then(r=>{if(!r.ok)throw Error('Cannot read download content');return r.arrayBuffer();});
+    const ready=bytes.then(value=>({value}),error=>({error}));
+    status('正在准备导出…');
+    (async()=>{
+     const result=await ready;if(result.error)throw result.error;
+     if(result.value.byteLength>32*1024*1024)throw Error('Export exceeds 32 MiB');
+     const target=await ti.invoke('plugin:dialog|save',{options:{defaultPath:name}});
+     if(target===null){status('已取消导出');return;}
+     await ti.invoke('plugin:fs|write_file',new Uint8Array(result.value),{headers:{path:encodeURIComponent(target)}});
+     status('导出成功，请到所选位置查看文件');
+    })().catch(error=>{status('导出失败：'+String(error.message||error));console.error('[Android export]',error);}).finally(()=>active.delete(anchor));
+    return true;
+   }
+   const click=win.HTMLAnchorElement.prototype.click;
+   win.HTMLAnchorElement.prototype.click=function(){if(capture(this))return;return click.apply(this,arguments);};
+   win.document.addEventListener('click',function(event){
+    const anchor=event.target&&event.target.closest&&event.target.closest('a[download]');
+    if(capture(anchor)){event.preventDefault();event.stopImmediatePropagation();}
+   },true);
+  }
  }
  return {install};
 });

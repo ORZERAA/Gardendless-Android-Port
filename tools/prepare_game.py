@@ -57,7 +57,7 @@ def main():
             for name in scripts:
                 data=(ROOT/'compat'/name).read_bytes()
                 z.writestr('pvzge_web-master/docs/'+name,data);manifest[name]=hashlib.sha256(data).hexdigest()
-            z.writestr('pvzge_web-master/docs/android-port.json',json.dumps({'version':'0.16.26-offline-alpha5-webviewfix','offline':True},indent=2))
+            z.writestr('pvzge_web-master/docs/android-port.json',json.dumps({'version':'0.16.26-offline-alpha6-savefix','offline':True},indent=2))
         os.replace(tmp,target)
     finally:tmp.unlink(missing_ok=True)
     (ROOT/'game-package-manifest.json').write_text(json.dumps({'version':info['Version'],'files':manifest},indent=2),encoding='utf-8')
